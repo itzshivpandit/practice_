@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: acl-tenant-frontend
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: acl-tenant
+      type: frontend
+  template:
+    metadata:
+      name: acl-tenant-f-pod
+      labels:
+        app: acl-tenant
+        type: frontend
+    spec:
+      containers:
+      - name: acl-tenant-frontend
+        image: alphacodesvikas/acl_uat_tenant_frontend_postgres:cc7084fd0e0e9df4e7fb2116c9d098c7d204d2ad
+        ports:
+        - containerPort: 80
+        resources:
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 600Mi
+        env:
+        - name: loginTitle
+          value: TENANT
+        - name: _WEBGATEWAY_BASIC_URL_
+          value: http://99.99.99.63:30001/tenant/
+        - name: _BASIC_URL_
+          value: http://99.99.99.63:30001/tenant/
+        - name: _AUTH_GATEWAY_URL
+          value: http://99.99.99.63:30006
+        - name: gateWayAuthorization
+          value: "false"
+        - name: welcome_feature
+          value: "true"
+        - name: weather_feature
+          value: "true"
+        - name: quotes_feature
+          value: "true"
+        - name: analytics_data
+          value: "true"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acl-tenant-f-nw
+spec:
+  selector:
+    app: acl-tenant
+    type: frontend
+  type: NodePort
+  clusterIP: 10.96.0.16
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30006

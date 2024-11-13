@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acl-core-backend
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: acl-core
+      type: backend
+  template:
+    metadata:
+      name: acl-core-b-pod
+      labels:
+        app: acl-core
+        type: backend
+    spec:
+     containers:
+     - name: acl-core-backend
+       image: alphacodesvikas/acl_core_uat_backend_postgres:dca63e798ac41482175c4c4809603b6f6d821cb5
+       ports:
+       - containerPort: 8762
+       env:
+       - name: SPRING_PROFILES_ACTIVE
+         value: uat_k8
+       resources:
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: acl-core-b-nw
+spec:
+  selector:
+    app: acl-core
+    type: backend
+  type: NodePort
+  clusterIP: 10.96.0.15
+  ports:
+  - port: 8762
+    targetPort: 8762
+    nodePort: 30010

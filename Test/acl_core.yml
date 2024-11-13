@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: acl-core-frontend
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: acl-core
+      type: frontend
+  template:
+    metadata:
+      name: acl-core-f-pod
+      labels:
+        app: acl-core
+        type: frontend
+    spec:
+      containers:
+      - name: acl-core-frontend
+        image: alphacodesvikas/acl_core_uat_frontend_postgres:cc7084fd0e0e9df4e7fb2116c9d098c7d204d2ad
+        ports:
+        - containerPort: 80
+        resources:
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 500Mi
+        env:
+        - name: loginTitle
+          value: CORE
+        - name: prowatch_url
+          value: http://in2it.prowatch.cats4u.ai
+        - name: _WEBGATEWAY_BASIC_URL_
+          value: http://99.99.99.63:30001/core/
+        - name: _BASIC_URL_
+          value: http://99.99.99.63:30001/core/
+        - name: _AUTH_GATEWAY_URL
+          value: http://99.99.99.63:30005
+        - name: gateWayAuthorization
+          value: "true"
+        - name: welcome_feature
+          value: "true"
+        - name: weather_feature
+          value: "true"
+        - name: quotes_feature
+          value: "true"
+        - name: analytics_data
+          value: "true"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acl-core-f-nw
+spec:
+  selector:
+    app: acl-core
+    type: frontend
+  type: NodePort
+  clusterIP: 10.96.0.14
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30005

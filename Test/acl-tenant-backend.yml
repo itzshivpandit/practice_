@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acl-tenant-backend
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: acl-tenant
+      type: backend
+  template:
+    metadata:
+      name: acl-tenant-b-pod
+      labels:
+        app: acl-tenant
+        type: backend
+    spec:
+     containers:
+     - name: acl-tenant-backend
+       image: alphacodesvikas/acl_tenant_uat_backend_postgres:7e025d59f1ea114bd1eedb8e412c32ca2ff92c72
+       ports:
+       - containerPort: 8080
+       resources:
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 500Mi
+       env:
+       - name: SPRING_PROFILES_ACTIVE
+         value: uat_k8
+
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: acl-tenant-b-nw
+spec:
+  selector:
+    app: acl-tenant
+    type: backend
+  type: NodePort
+  clusterIP: 10.96.0.17
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30011
+
