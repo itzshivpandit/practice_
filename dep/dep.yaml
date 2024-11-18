@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: shivsharma01/app-version-v1:latest
+        image: shivsharma01/app-version-v2:latest
         ports:
         - containerPort: 80
 ---
