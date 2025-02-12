@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nginx1
-        image: shivsharma01/school:tagname
+        image: shivsharma01/carvilla-site
         ports:
         - containerPort: 80  # Corrected syntax
 ---
