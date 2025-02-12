@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: nginx-deployment1
   labels:
     app: nginx
 spec:
@@ -22,7 +22,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-service
+  name: nginx-service1
 spec:
   selector:
     app: nginx
@@ -30,6 +30,6 @@ spec:
     - protocol: TCP
       port: 80           # Port exposed by the service
       targetPort: 80     # Port on the Nginx container
-      nodePort: 30007    # Port on each Node to access the service
+      nodePort: 30008    # Port on each Node to access the service
   type: NodePort
 
