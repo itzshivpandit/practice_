@@ -30,6 +30,6 @@ spec:
     - protocol: TCP
       port: 80           # Port exposed by the service
       targetPort: 80     # Port on the Nginx container
-      nodePort: 30008    # Port on each Node to access the service
+      nodePort: 30011    # Port on each Node to access the service
   type: NodePort
 
